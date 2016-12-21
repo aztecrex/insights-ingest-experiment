@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  IngestFunction:
+    Properties:
+      CodeUri: s3://insights-experiment/e2a76fdeb89986a1294c55e19e90ee72
+      Handler: index.handler
+      Runtime: nodejs4.3
+    Type: AWS::Serverless::Function
+  IngestFunctionExecutePermission:
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: IngestFunction
+      Principal: sns.amazonaws.com
+      SourceArn:
+        Ref: IngestTopic
+    Type: AWS::Lambda::Permission
+  IngestTopic:
+    Properties:
+      Subscription:
+      - Endpoint:
+          Fn::GetAtt:
+          - IngestFunction
+          - Arn
+        Protocol: lambda
+    Type: AWS::SNS::Topic
+Transform: AWS::Serverless-2016-10-31
