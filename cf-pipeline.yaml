@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  ArtifactStore:
+    Type: AWS::S3::Bucket
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Ref: ArtifactStore
+      RoleArn: [[ role goes here ]]
+      Stages:
+        - Actions:
+          - ActionTypeId:
+              Category: Source
+              Owner: AWS
+              Version: 1
+              Provider: S3
+            OutputArtifacts:
+              - Configuration:
+                  S3Bucket:
+                    Ref: SourceS3Bucket
+                  S3ObjectKey:
+                    Ref: SourceS3ObjectKey
+                RunOrder: 1
